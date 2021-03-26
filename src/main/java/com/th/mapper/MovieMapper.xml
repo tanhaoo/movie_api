@@ -21,4 +21,8 @@
         id, movie_name, url, timer, genre, release_time, introduce, directors, writers, stars
     </sql>
 
+    <select id="getRatePerson" resultType="Integer">
+        SELECT  count(*) as 人数 FROM `movie_rating` group by movie_id ORDER BY `人数` desc limit 1
+    </select>
+
 </mapper>

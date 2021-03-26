@@ -1,4 +1,4 @@
-package com.th.utils.retunJson;
+package com.th.utils;
 
 import lombok.Data;
 

@@ -4,10 +4,10 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.th.bean.MovieRating">
-        <result column="user_id" property="userId" />
-        <result column="movie_id" property="movieId" />
-        <result column="rating" property="rating" />
-        <result column="timestamp" property="timestamp" />
+        <result column="user_id" property="userId"/>
+        <result column="movie_id" property="movieId"/>
+        <result column="rating" property="rating"/>
+        <result column="timestamp" property="timestamp"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -15,4 +15,9 @@
         user_id, movie_id, rating, timestamp
     </sql>
 
+
+    <select id="getRateMessage" resultType="com.th.bean.vo.RateMessage">
+         select a.movie_id,(score/person) as rate from (SELECT movie_id,sum(rating) as score FROM (`movie_rating`) GROUP BY movie_id)as a,
+ (select movie_id,count(*) as person from movie_rating GROUP BY movie_id) as b where a.movie_id=b.movie_id
+    </select>
 </mapper>

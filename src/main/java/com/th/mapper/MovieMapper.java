@@ -14,5 +14,5 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public interface MovieMapper extends BaseMapper<Movie> {
-
+    Integer getRatePerson();
 }

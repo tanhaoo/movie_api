@@ -7,7 +7,7 @@ import com.th.bean.vo.Permission;
 import com.th.bean.vo.Permissions;
 import com.th.bean.vo.UserInfo;
 import com.th.service.UserService;
-import com.th.utils.retunJson.ReturnObject;
+import com.th.utils.ReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

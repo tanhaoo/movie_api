@@ -14,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface MovieService extends IService<Movie> {
     IPage<Movie> getMovieByPage(int currentPage, int size);
+
+    Integer getCurrentRatedPeople();
 }
