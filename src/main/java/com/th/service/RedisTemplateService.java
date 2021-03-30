@@ -1,6 +1,7 @@
 package com.th.service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -13,6 +14,8 @@ public interface RedisTemplateService {
     <T> boolean set(String key, T value, long time, TimeUnit timeUnit);
 
     <T> T get(String key, Class<T> clazz);
+
+    <T> List<T> getList(String key, Class<T> clazz);
 
     boolean deleteKey(String key);
 

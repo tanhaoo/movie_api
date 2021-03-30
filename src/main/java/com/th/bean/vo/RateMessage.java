@@ -8,10 +8,13 @@ import lombok.Data;
  */
 @Data
 public class RateMessage {
-    private String movieId;
+    private Integer movieId;
     private double rate;
 
-    public RateMessage(String movieId, long rate) {
+    public RateMessage() {
+    }
+
+    public RateMessage(Integer movieId, long rate) {
         this.movieId = movieId;
         this.rate = rate;
     }

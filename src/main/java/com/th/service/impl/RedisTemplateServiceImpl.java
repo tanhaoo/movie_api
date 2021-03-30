@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,9 +44,9 @@ public class RedisTemplateServiceImpl implements RedisTemplateService {
     /**
      * 将值放入缓存并设置时间
      *
-     * @param key   键
-     * @param value 值
-     * @param time  时长
+     * @param key      键
+     * @param value    值
+     * @param time     时长
      * @param timeUnit 时间单位
      * @return true成功 false 失败
      */
@@ -73,6 +74,16 @@ public class RedisTemplateServiceImpl implements RedisTemplateService {
             String value = stringRedisTemplate.opsForValue().get(key);
             return StringToBean.stringToBean(value, clazz);
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public <T> List<T> getList(String key, Class<T> clazz) {
+        try {
+            String value = stringRedisTemplate.opsForValue().get(key);
+            return StringToBean.stringToList(value, clazz);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }

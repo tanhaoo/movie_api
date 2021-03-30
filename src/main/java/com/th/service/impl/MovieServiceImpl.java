@@ -39,13 +39,11 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     @Override
     public Integer getCurrentRatedPeople() {
         Integer ratePerson = 0;
-        if (redisTemplateService.exists("rate_people"))
-        {
-            System.out.println("通过Redis调用getCurrentRatedPeople");
+        if (redisTemplateService.exists("rate_people")) {
+            System.out.println("通过Redis获取getCurrentRatedPeople");
             return redisTemplateService.get("rate_people", Integer.class);
-        }
-        else {
-            System.out.println("通过MySQL调用getCurrentRatedPeople");
+        } else {
+            System.out.println("通过MySQL获取getCurrentRatedPeople");
             ratePerson = movieMapper.getRatePerson();
             //设置一个星期失效一次
             redisTemplateService.set("rate_people", ratePerson, 7, TimeUnit.DAYS);

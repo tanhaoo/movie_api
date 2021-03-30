@@ -1,12 +1,14 @@
 package com.th.bean;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author TanHaooo
@@ -37,6 +39,17 @@ public class Movie implements Serializable {
 
     private String stars;
 
+    //代表此字段不是数据库表字段
+    @TableField(exist = false)
+    private double rating;
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
 
     public Integer getId() {
         return id;

@@ -1,6 +1,8 @@
 package com.th.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.th.bean.vo.RateMessage;
 
 import java.util.List;
 
@@ -20,11 +22,13 @@ public class StringToBean {
             return (T) Long.valueOf(value);
         } else if (clazz == String.class) {
             return (T) value;
-        } else if (clazz == List.class) {
-            return (T) JSON.parseArray(value);
         } else {
             return JSON.toJavaObject(JSON.parseObject(value), clazz);
         }
+}
+
+    public static <T> List<T> stringToList(String value, Class<T> clazz) {
+        return JSON.parseArray(value, clazz);
     }
 
     public static <T> String beanToString(T value) {

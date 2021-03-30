@@ -1,5 +1,6 @@
 package com.th;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -136,9 +137,10 @@ class MovieApiApplicationTests {
 
     @Test
     public void testRateMessageRedis() {
-        List<RateMessage> rateMessages=new ArrayList<>();
+        List<RateMessage> rateMessages = new ArrayList<>();
         if (redisTemplateService.exists("rate_message")) {
-            rateMessages = (List<RateMessage>) redisTemplateService.get("rate_message", List.class);
+            // rateMessages = (List<RateMessage>) redisTemplateService.get("rate_message", List.class);
+            rateMessages = redisTemplateService.getList("rate_message", RateMessage.class);
         }
         System.out.println(rateMessages);
     }
