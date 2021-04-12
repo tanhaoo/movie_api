@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.th.mapper.MovieListMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.th.bean.MovieList">
+        <result column="user_id" property="userId"/>
+        <result column="list_name" property="listName"/>
+        <result column="movie_id" property="movieName"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_id, list_id, list_name, movie_id
+    </sql>
+
+
+    <select id="getUserMovieListCount" resultType="com.th.bean.vo.UserMovieListCount">
+        select  list_name,count(*) as count from movie_list where user_id=#{uid} group by list_name
+    </select>
+</mapper>

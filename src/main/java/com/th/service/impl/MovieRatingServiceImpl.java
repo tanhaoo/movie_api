@@ -33,9 +33,9 @@ public class MovieRatingServiceImpl extends ServiceImpl<MovieRatingMapper, Movie
     @Override
     public List<RateMessage> getRateMessage() {
         List<RateMessage> rateMessages = movieRatingMapper.getRateMessage();
-        for (RateMessage rateMessage : rateMessages) {
-            rateMessage.setRate(MathUtil.round(rateMessage.getRate(), 1, BigDecimal.ROUND_HALF_UP));
-        }
+        rateMessages.forEach(e->{
+            e.setRate(MathUtil.roundTwo(e.getRate(), 1, BigDecimal.ROUND_HALF_UP));
+        });
         redisTemplateService.set("rate_message", rateMessages, 7, TimeUnit.DAYS);
         return rateMessages;
     }

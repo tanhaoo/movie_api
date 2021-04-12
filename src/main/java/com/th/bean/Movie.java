@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 public class Movie implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
@@ -42,6 +42,12 @@ public class Movie implements Serializable {
     //代表此字段不是数据库表字段
     @TableField(exist = false)
     private double rating;
+
+    @TableField(exist = false)
+    private MovieRating movieRating;
+
+    @TableField(exist = false)
+    private MovieList movieList;
 
     public double getRating() {
         return rating;
@@ -131,19 +137,35 @@ public class Movie implements Serializable {
         this.stars = stars;
     }
 
+    public MovieRating getMovieRating() {
+        return movieRating;
+    }
+
+    public void setMovieRating(MovieRating movieRating) {
+        this.movieRating = movieRating;
+    }
+
+    public MovieList getMovieList() {
+        return movieList;
+    }
+
+    public void setMovieList(MovieList movieList) {
+        this.movieList = movieList;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
-        "id=" + id +
-        ", movieName=" + movieName +
-        ", url=" + url +
-        ", timer=" + timer +
-        ", genre=" + genre +
-        ", releaseTime=" + releaseTime +
-        ", introduce=" + introduce +
-        ", directors=" + directors +
-        ", writers=" + writers +
-        ", stars=" + stars +
-        "}";
+                "id=" + id +
+                ", movieName=" + movieName +
+                ", url=" + url +
+                ", timer=" + timer +
+                ", genre=" + genre +
+                ", releaseTime=" + releaseTime +
+                ", introduce=" + introduce +
+                ", directors=" + directors +
+                ", writers=" + writers +
+                ", stars=" + stars +
+                "}";
     }
 }

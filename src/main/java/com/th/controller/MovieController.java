@@ -2,20 +2,24 @@ package com.th.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.th.bean.Movie;
+import com.th.bean.MovieList;
 import com.th.bean.vo.RateMessage;
+import com.th.bean.vo.SelectStatusMessage;
+import com.th.mapper.MovieListMapper;
+import com.th.service.MovieListService;
 import com.th.service.MovieRatingService;
 import com.th.service.MovieService;
 import com.th.service.RedisTemplateService;
 import com.th.utils.ReturnObject;
 import com.th.utils.MovieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,17 +46,13 @@ public class MovieController {
     @Autowired
     private MovieRatingService movieRatingService;
 
+    @Autowired
+    private MovieListService movieListService;
+
     @PostMapping("getMovieByPages")
     public String getMovieByPages(@RequestParam("currentPage") int currentPage, @RequestParam("size") int size) {
         System.out.println("getMovieByPages");
-        List<RateMessage> rateMessages = new ArrayList<>();
-        if (redisTemplateService.exists("rate_message")) {
-            System.out.println("通过Redis获取getRateMessage");
-            rateMessages = redisTemplateService.getList("rate_message", RateMessage.class);
-        } else {
-            System.out.println("通过MySQL获取getRateMessage");
-            rateMessages = movieRatingService.getRateMessage();
-        }
+        List<RateMessage> rateMessages = MovieUtil.getRateMessage(redisTemplateService, movieRatingService);
         IPage<Movie> movieIPage = movieService.getMovieByPage(currentPage, size);
         MovieUtil.addRateToMovie(movieIPage.getRecords(), rateMessages);
         return JSONObject.toJSONString(new ReturnObject(movieIPage));
@@ -61,6 +61,43 @@ public class MovieController {
     @PostMapping("getCurrentRatePeople")
     public String getCurrentRatePeople() {
         return JSONObject.toJSONString(new ReturnObject(movieService.getCurrentRatedPeople()));
+    }
+
+    @PostMapping("getMovieBySelectStatus")
+    public String getMovieBySelectStatus(@RequestBody SelectStatusMessage statusMessage) {
+        System.out.println(statusMessage);
+        List<RateMessage> rateMessages = MovieUtil.getRateMessage(redisTemplateService, movieRatingService);
+        IPage<Movie> movieIPage = movieService.getMovieBySelectStatus(statusMessage);
+        MovieUtil.addRateToMovie(movieIPage.getRecords(), rateMessages);
+        return JSONObject.toJSONString(new ReturnObject(movieIPage));
+    }
+
+    @PostMapping("getMovieById")
+    public String getMovieById(@RequestParam("id") int id) {
+        List<RateMessage> rateMessages = MovieUtil.getRateMessage(redisTemplateService, movieRatingService);
+        return JSONObject.toJSONString(new ReturnObject(MovieUtil.addRateToMovie(movieService.getById(id), rateMessages)));
+    }
+
+    @PostMapping("getMovieByItemRecommend")
+    public String getMovieByItemRecommend(@RequestParam("id") int id) {
+
+        return JSONObject.toJSONString(new ReturnObject());
+    }
+
+    @PostMapping("getMovieByRating")
+    public String getMovieByRating(@RequestParam("currentPage") int currentPage, @RequestParam("size") int size, @RequestParam("id") int id) {
+        System.out.println(currentPage + "|" + size + "}" + id);
+        IPage<Movie> page = movieService.getMovieByRating(new Page(currentPage, size), id);
+        List<MovieList> movieLists = movieListService.list(new QueryWrapper<MovieList>().eq("user_id", id));
+        MovieUtil.addRateToMovie(page.getRecords(), MovieUtil.getRateMessage(redisTemplateService, movieRatingService));
+        MovieUtil.addListToMovie(page.getRecords(), movieLists);
+        return JSONObject.toJSONString(new ReturnObject(page), SerializerFeature.WriteMapNullValue);//不写的话有NULL值被直接忽略
+    }
+
+    @PostMapping("getMovieByKeyWord")
+    public String getMovieByKeyWord(@RequestParam("keyword") String keyword) {
+        System.out.println(keyword);
+        return JSONObject.toJSONString(new ReturnObject(movieService.getMovieByKeyWord(keyword)));
     }
 }
 

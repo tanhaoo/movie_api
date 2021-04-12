@@ -22,4 +22,10 @@ public class MathUtil {
             decimal = 1;
         return (int) d + decimal;
     }
+
+    public static double roundTwo(double value, int scale, int roundingMode){
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(scale, roundingMode);
+        return bd.doubleValue();
+    }
 }

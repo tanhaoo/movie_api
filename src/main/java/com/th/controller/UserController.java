@@ -40,7 +40,7 @@ public class UserController {
     public String login(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session) {
         System.out.println("login");
         User user = userService.login(username, password);
-        user.setToken(user.getUserName());
+        user.setToken(String.valueOf(user.getId()));
         session.setAttribute("userRecord", user);
         return JSONObject.toJSONString(new ReturnObject(user));
     }

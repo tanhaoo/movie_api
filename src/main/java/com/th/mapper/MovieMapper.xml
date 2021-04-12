@@ -4,16 +4,16 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.th.bean.Movie">
-        <id column="id" property="id" />
-        <result column="movie_name" property="movieName" />
-        <result column="url" property="url" />
-        <result column="timer" property="timer" />
-        <result column="genre" property="genre" />
-        <result column="release_time" property="releaseTime" />
-        <result column="introduce" property="introduce" />
-        <result column="directors" property="directors" />
-        <result column="writers" property="writers" />
-        <result column="stars" property="stars" />
+        <id column="id" property="id"/>
+        <result column="movie_name" property="movieName"/>
+        <result column="url" property="url"/>
+        <result column="timer" property="timer"/>
+        <result column="genre" property="genre"/>
+        <result column="release_time" property="releaseTime"/>
+        <result column="introduce" property="introduce"/>
+        <result column="directors" property="directors"/>
+        <result column="writers" property="writers"/>
+        <result column="stars" property="stars"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -25,4 +25,39 @@
         SELECT  count(*) as 人数 FROM `movie_rating` group by movie_id ORDER BY `人数` desc limit 1
     </select>
 
+    <select id="getMovieBySelectStatus" resultType="com.th.bean.Movie">
+        ${sql}
+    </select>
+
+    <resultMap id="userMovieResult" type="com.th.bean.Movie">
+        <id column="id" property="id"/>
+        <result column="movie_name" property="movieName"/>
+        <result column="url" property="url"/>
+        <result column="timer" property="timer"/>
+        <result column="genre" property="genre"/>
+        <result column="release_time" property="releaseTime"/>
+        <result column="introduce" property="introduce"/>
+        <result column="directors" property="directors"/>
+        <result column="writers" property="writers"/>
+        <result column="stars" property="stars"/>
+        <association property="movieRating" javaType="com.th.bean.MovieRating">
+            <result property="rating" column="rating"></result>
+            <result property="timestamp" column="timestamp"></result>
+        </association>
+
+    </resultMap>
+
+    <select id="getMovieByRating" resultMap="userMovieResult">
+        SELECT * FROM movie as m, movie_rating as mr where m.id=mr.movie_id and mr.user_id=#{id}
+    </select>
+
+    <select id="getMovieByKeyWord" resultType="com.th.bean.Movie">
+        <!--绑定模糊查询条件-->
+        <bind name="value_key" value="'%'+keyword+'%'"/>
+        select m.* from movie as m,(select movie_id,count(*) as vote from movie_rating group by movie_id ) as b where
+        m.id=b.movie_id and
+        (movie_name like #{value_key} or directors like #{value_key} or writers like #{value_key} or stars like
+        #{value_key})
+        order by vote desc,m.id limit 10
+    </select>
 </mapper>
