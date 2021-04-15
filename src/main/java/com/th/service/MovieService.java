@@ -22,7 +22,9 @@ public interface MovieService extends IService<Movie> {
 
     IPage<Movie> getMovieBySelectStatus(SelectStatusMessage statusMessage);
 
-    IPage<Movie> getMovieByRating(IPage page,int id);
+    IPage<Movie> getMovieByRating(IPage page, int id);
 
     List<Movie> getMovieByKeyWord(String keyword);
+
+    List<Movie> getMovieByUserRecommend(int uid);
 }

@@ -9,9 +9,21 @@ import com.th.mapper.MovieMapper;
 import com.th.service.MovieService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.th.service.RedisTemplateService;
+import org.apache.mahout.cf.taste.common.TasteException;
+import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
+import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
+import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
+import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
+import org.apache.mahout.cf.taste.model.DataModel;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+import org.apache.mahout.cf.taste.recommender.Recommender;
+import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -98,11 +110,11 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
                 + sqlRatingWhereStatus + sqlRatingMaxStatus + sqlGenreStatus + sqlTimeStatus + sqlVoteStatus
                 + " order by vote desc,m.id";
 
-        String sqlByRateUp = "select m.* from (select a.movie_id,score/vote as score from " +
+        String sqlByRateUp = "select m.* from (select a.movie_id,score/vote as score,vote from " +
                 " (select movie_id,sum(rating) as score from movie_rating GROUP BY movie_id)as a," +
-                " (select movie_id,count(*) as vote from movie_rating GROUP BY movie_id) as b where a.movie_id=b.movie_id )as result1,movie as m" +
+                " (select movie_id,count(*) as vote from movie_rating GROUP BY movie_id) as b where a.movie_id=b.movie_id )as b,movie as m" +
                 sqlRating +
-                " where result1.movie_id=m.id " + sqlRatingWhereStatus + sqlRatingMaxStatus + sqlGenreStatus + sqlTimeStatus + sqlVoteStatus + " order by result1.score ";
+                " where b.movie_id=m.id " + sqlRatingWhereStatus + sqlRatingMaxStatus + sqlGenreStatus + sqlTimeStatus + sqlVoteStatus + " order by b.score ";
         String sqlByRateDrops = (sqlByRateUp + " desc");
 
         String sqlByTimeUp = "select m.* from movie as m " + sqlRating +
@@ -145,5 +157,28 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     @Override
     public List<Movie> getMovieByKeyWord(String keyword) {
         return movieMapper.getMovieByKeyWord(keyword);
+    }
+
+    @Override
+    public List<Movie> getMovieByUserRecommend(int uid) {
+        File file = new File("D:\\Data\\movie.csv");
+
+        DataModel dataModel = null;
+        List<Movie> movies = new ArrayList<>();
+        try {
+            dataModel = new FileDataModel(file);
+            ItemSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
+            Recommender recommender = new GenericItemBasedRecommender(dataModel, similarity);
+            List<RecommendedItem> list = recommender.recommend(uid, 10);
+            System.out.println(list);
+            list.forEach(e -> {
+                movies.add(movieMapper.selectById(e.getItemID()));
+            });
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        } catch (TasteException e) {
+            e.printStackTrace();
+        }
+        return movies;
     }
 }

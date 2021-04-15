@@ -1,11 +1,14 @@
 package com.th.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.th.bean.Movie;
 import com.th.bean.MovieList;
+import com.th.bean.MovieRating;
 import com.th.bean.vo.RateMessage;
 import com.th.service.MovieRatingService;
+import com.th.service.MovieService;
 import com.th.service.RedisTemplateService;
 import com.th.service.impl.RedisTemplateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,15 @@ public class MovieUtil {
         return movie;
     }
 
+//    public static void addMovieToMovieList(List<MovieList> movieLists, List<Movie> movies) {
+//        movieLists.stream().map(movieList -> {
+//            movies.stream().filter(movie -> Objects.equals(movie.getId(), movieList.getMovieId())).forEach(movie -> {
+//                movie.setMovieList(movieList);
+//            });
+//            return movieList;
+//        }).collect(Collectors.toList());
+//    }
+
     public static List<RateMessage> getRateMessage(RedisTemplateService redisTemplateService, MovieRatingService movieRatingService) {
         if (redisTemplateService.exists("rate_message")) {
             System.out.println("通过Redis获取getRateMessage");
@@ -60,5 +72,14 @@ public class MovieUtil {
             System.out.println("通过MySQL获取getRateMessage");
             return movieRatingService.getRateMessage();
         }
+    }
+
+    public static void addUserRateToMovie(List<Movie> movies, int uid, MovieRatingService movieRatingService) {
+        movies.stream().map(movie -> {
+            movie.setMovieRating(movieRatingService.getOne(new QueryWrapper<MovieRating>()
+                    .eq("user_id", uid)
+                    .eq("movie_id", movie.getId())));
+            return movie;
+        }).collect(Collectors.toList());
     }
 }

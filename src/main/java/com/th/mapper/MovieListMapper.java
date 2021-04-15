@@ -15,4 +15,6 @@ import java.util.List;
 @Component
 public interface MovieListMapper extends BaseMapper<MovieList> {
     List<UserMovieListCount> getUserMovieListCount(int uid);
+
+    List<Movie> getMovieListByUserId(MovieList movieList);
 }

@@ -45,7 +45,6 @@ public class MovieRatingController {
                         .eq("user_id", movieRating.getUserId())
                         .eq("movie_id", movieRating.getMovieId())) ? "删除评分成功" : "删除评分失败"
         ));
-
     }
 }
 

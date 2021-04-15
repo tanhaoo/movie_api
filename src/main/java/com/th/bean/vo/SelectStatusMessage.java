@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class SelectStatusMessage {
+    private int userId;
     private String resultSort;
     //显示状态 1 全部 2未观看 3 已观看
     private int display;

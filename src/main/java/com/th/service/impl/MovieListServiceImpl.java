@@ -3,6 +3,7 @@ package com.th.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.th.bean.Movie;
 import com.th.bean.MovieList;
 import com.th.bean.vo.UserMovieListCount;
 import com.th.mapper.MovieListMapper;
@@ -55,5 +56,10 @@ public class MovieListServiceImpl extends ServiceImpl<MovieListMapper, MovieList
     @Override
     public List<UserMovieListCount> getUserMovieListCount(int uid) {
         return movieListMapper.getUserMovieListCount(uid);
+    }
+
+    @Override
+    public List<Movie> getMovieListByUserId(MovieList movieList) {
+        return movieListMapper.getMovieListByUserId(movieList);
     }
 }

@@ -13,8 +13,13 @@
         user_id, list_id, list_name, movie_id
     </sql>
 
-
     <select id="getUserMovieListCount" resultType="com.th.bean.vo.UserMovieListCount">
-        select  list_name,count(*) as count from movie_list where user_id=#{uid} group by list_name
+        select  list_name,count(*) as count from (select * from movie_list where  !ISNULL(movie_id) and list_name!="我的最爱")as ml
+        where user_id=#{uid}  group by list_name
+    </select>
+
+    <select id="getMovieListByUserId" parameterType="com.th.bean.MovieList" resultType="com.th.bean.Movie">
+        SELECT m.* FROM movie_list as ml,movie as m where ml.movie_id=m.id and ml.list_name=#{listName} and ml.user_id=#{userId}
+
     </select>
 </mapper>

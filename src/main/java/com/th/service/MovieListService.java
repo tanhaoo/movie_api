@@ -17,4 +17,6 @@ public interface MovieListService extends IService<MovieList> {
     String InsertMovieLists(MovieList[] movieLists);
 
     List<UserMovieListCount> getUserMovieListCount(int uid);
+
+    List<Movie> getMovieListByUserId(MovieList movieList);
 }

@@ -16,6 +16,7 @@ import com.th.service.MovieListService;
 import com.th.service.MovieRatingService;
 import com.th.service.MovieService;
 import com.th.service.RedisTemplateService;
+import com.th.utils.CSVUtil;
 import com.th.utils.ReturnObject;
 import com.th.utils.MovieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -69,6 +71,7 @@ public class MovieController {
         List<RateMessage> rateMessages = MovieUtil.getRateMessage(redisTemplateService, movieRatingService);
         IPage<Movie> movieIPage = movieService.getMovieBySelectStatus(statusMessage);
         MovieUtil.addRateToMovie(movieIPage.getRecords(), rateMessages);
+        MovieUtil.addUserRateToMovie(movieIPage.getRecords(), statusMessage.getUserId(), movieRatingService);
         return JSONObject.toJSONString(new ReturnObject(movieIPage));
     }
 
@@ -78,17 +81,11 @@ public class MovieController {
         return JSONObject.toJSONString(new ReturnObject(MovieUtil.addRateToMovie(movieService.getById(id), rateMessages)));
     }
 
-    @PostMapping("getMovieByItemRecommend")
-    public String getMovieByItemRecommend(@RequestParam("id") int id) {
-
-        return JSONObject.toJSONString(new ReturnObject());
-    }
-
     @PostMapping("getMovieByRating")
     public String getMovieByRating(@RequestParam("currentPage") int currentPage, @RequestParam("size") int size, @RequestParam("id") int id) {
         System.out.println(currentPage + "|" + size + "}" + id);
         IPage<Movie> page = movieService.getMovieByRating(new Page(currentPage, size), id);
-        List<MovieList> movieLists = movieListService.list(new QueryWrapper<MovieList>().eq("user_id", id));
+        List<MovieList> movieLists = movieListService.list(new QueryWrapper<MovieList>().eq("user_id", id).eq("list_name", "我的最爱"));
         MovieUtil.addRateToMovie(page.getRecords(), MovieUtil.getRateMessage(redisTemplateService, movieRatingService));
         MovieUtil.addListToMovie(page.getRecords(), movieLists);
         return JSONObject.toJSONString(new ReturnObject(page), SerializerFeature.WriteMapNullValue);//不写的话有NULL值被直接忽略
@@ -98,6 +95,20 @@ public class MovieController {
     public String getMovieByKeyWord(@RequestParam("keyword") String keyword) {
         System.out.println(keyword);
         return JSONObject.toJSONString(new ReturnObject(movieService.getMovieByKeyWord(keyword)));
+    }
+
+    @PostMapping("getMovieByUserRecommend")
+    public String getMovieByUserRecommend(@RequestParam("uid") int id) {
+        if (!redisTemplateService.exists("movieData")) {
+            System.out.println("Overwrite MovieData");
+            CSVUtil.movieToCSV(movieRatingService);
+            redisTemplateService.set("movieData", true, 1, TimeUnit.DAYS);
+        }
+        List<Movie> movies = movieService.getMovieByUserRecommend(id);
+        List<MovieList> movieLists = movieListService.list(new QueryWrapper<MovieList>().eq("user_id", id).eq("list_name", "我的最爱"));
+        MovieUtil.addRateToMovie(movies, MovieUtil.getRateMessage(redisTemplateService, movieRatingService));
+        MovieUtil.addListToMovie(movies, movieLists);
+        return JSONObject.toJSONString(new ReturnObject(movies));
     }
 }
 

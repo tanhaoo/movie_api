@@ -151,19 +151,11 @@ class MovieApiApplicationTests {
 
     @Test
     public void testMySql() {
-//        List<MovieList> movieLists = movieListService.list(new QueryWrapper<MovieList>().eq("user_id", 1));
-//        System.out.println(movieLists);
-//        IPage<Movie> page = movieService.getMovieByRating(new Page(1, 30), 1);
-//        MovieUtil.addListToMovie(page.getRecords(), movieLists);
-//        System.out.println("----------------");
-//        System.out.println(page.getRecords());
-//        MovieList movieList = new MovieList();
-//        movieList.setListName("我的最1爱");
-//        movieList.setMovieId(1);
-//        movieList.setUserId(1);
-//        System.out.println(movieListService.InsertDelMovieList(movieList));
-        List<UserMovieListCount> movies = new ArrayList<>();
-        movies = movieListService.getUserMovieListCount(1);
+        List<Movie> movies = new ArrayList<>();
+        MovieList list = new MovieList();
+        list.setUserId(1);
+        list.setListName("TH2");
+        movies = movieListService.getMovieListByUserId(list);
         System.out.println(movies);
     }
 
@@ -262,25 +254,31 @@ class MovieApiApplicationTests {
     }
 
     @Test
+    public void testRecommendByUser() {
+        List<Movie> movies = movieService.getMovieByUserRecommend(1);
+        System.out.println(movies);
+    }
+
+    @Test
     public void testCSV() {
         String path = "D:\\Data\\movie.csv";
-//        File file = new File(path);
-        try {
-            CsvWriter csvWriter = new CsvWriter(path, ',', Charset.forName("GBK"));
-            String[] headers = {"user_id", "movie_id", "rating", "timestamp"};
-            csvWriter.writeRecord(headers);
-
-            QueryWrapper<MovieRating> queryWrapper = new QueryWrapper<>();
-            List<MovieRating> movies = movieRatingMapper.selectList(queryWrapper);
-            for (MovieRating movie : movies) {
-                System.out.println(movie);
-                String[] content = {String.valueOf(movie.getUserId()), String.valueOf(movie.getMovieId()), String.valueOf(movie.getRating()), movie.getTimestamp()};
-                csvWriter.writeRecord(content);
+        File file = new File(path);
+        System.out.println(file.exists());
+        if (file.exists())
+            try {
+                CsvWriter csvWriter = new CsvWriter(path, ',', Charset.forName("GBK"));
+//                String[] headers = {"user_id", "movie_id", "rating", "timestamp"};
+//                csvWriter.writeRecord(headers);
+                List<MovieRating> movies = movieRatingService.list();
+                for (MovieRating movie : movies) {
+                    System.out.println(movie);
+                    String[] content = {String.valueOf(movie.getUserId()), String.valueOf(movie.getMovieId()), String.valueOf(movie.getRating()), movie.getTimestamp()};
+                    csvWriter.writeRecord(content);
+                }
+                csvWriter.close();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
-            csvWriter.close();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
 
     }
 
@@ -337,8 +335,12 @@ class MovieApiApplicationTests {
 
     @Test
     public void test() {
-        int i = 0;
-        i = (i++) + (i++);
-        System.out.println(i);
+        MovieList movieList = new MovieList();
+        movieList.setUserId(1);
+        movieList.setListName("v5");
+        MovieList movieList1 = new MovieList();
+        movieList1.setListName("v7");
+        movieListService.update(movieList1, new QueryWrapper<MovieList>()
+                .eq("user_id", movieList.getUserId()).eq("list_name", movieList.getListName()));
     }
 }
