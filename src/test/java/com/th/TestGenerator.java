@@ -7,10 +7,12 @@ import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.th.utils.TimeUtil;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author TanHaooo
@@ -60,10 +62,17 @@ public class TestGenerator {
         //long转date
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long current = 964982703;
+        long current = Long.parseLong(time);
         Timestamp ts = new Timestamp(current * 1000);// 不除就是精确到ms 这个是到s
         System.out.println(current);
         String dateString = format.format(ts);
         System.out.println(dateString);
     }
+
+    @Test
+    public void test() {
+        System.out.println(TimeUtil.TimeStampToTimeFormat(
+                TimeUtil.TimeFormatToTimeStamp(System.currentTimeMillis())));
+    }
+
 }

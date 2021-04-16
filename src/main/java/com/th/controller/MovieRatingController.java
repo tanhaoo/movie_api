@@ -7,6 +7,7 @@ import com.th.bean.Movie;
 import com.th.bean.MovieRating;
 import com.th.service.MovieRatingService;
 import com.th.utils.ReturnObject;
+import com.th.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +29,18 @@ public class MovieRatingController {
 
     @PostMapping("updateRatingByUserId")
     public String updateRatingByUserId(@RequestParam("uid") int uid, @RequestParam("mid") int mid, @RequestParam("rating") float rating) {
-        QueryWrapper wrapper = new QueryWrapper();
-        MovieRating mr = new MovieRating();
-        mr.setRating(rating);
-        wrapper.eq("user_id", uid);
-        wrapper.eq("movie_id", mid);
-        movieRatingService.update(mr, wrapper);
+        if (movieRatingService.getOne(new QueryWrapper<MovieRating>()
+                .eq("user_id", uid).eq("movie_id", mid)) == null) {
+            movieRatingService.save(new MovieRating(uid, mid, rating,
+                    TimeUtil.TimeFormatToTimeStamp(System.currentTimeMillis())));
+        } else {
+            QueryWrapper wrapper = new QueryWrapper();
+            MovieRating mr = new MovieRating();
+            mr.setRating(rating);
+            wrapper.eq("user_id", uid);
+            wrapper.eq("movie_id", mid);
+            movieRatingService.update(mr, wrapper);
+        }
         return JSON.toJSONString(new ReturnObject(true));
     }
 

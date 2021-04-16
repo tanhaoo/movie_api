@@ -56,6 +56,16 @@ public class MovieRating implements Serializable {
         this.timestamp = timestamp;
     }
 
+    public MovieRating() {
+    }
+
+    public MovieRating(Integer userId, Integer movieId, Float rating, String timestamp) {
+        this.userId = userId;
+        this.movieId = movieId;
+        this.rating = rating;
+        this.timestamp = timestamp;
+    }
+
     @Override
     public String toString() {
         return "MovieRating{" +

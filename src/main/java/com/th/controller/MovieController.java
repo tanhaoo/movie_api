@@ -70,7 +70,9 @@ public class MovieController {
         System.out.println(statusMessage);
         List<RateMessage> rateMessages = MovieUtil.getRateMessage(redisTemplateService, movieRatingService);
         IPage<Movie> movieIPage = movieService.getMovieBySelectStatus(statusMessage);
+        List<MovieList> movieLists = movieListService.list(new QueryWrapper<MovieList>().eq("user_id", statusMessage.getUserId()).eq("list_name", "我的最爱"));
         MovieUtil.addRateToMovie(movieIPage.getRecords(), rateMessages);
+        MovieUtil.addListToMovie(movieIPage.getRecords(), movieLists);
         MovieUtil.addUserRateToMovie(movieIPage.getRecords(), statusMessage.getUserId(), movieRatingService);
         return JSONObject.toJSONString(new ReturnObject(movieIPage));
     }
