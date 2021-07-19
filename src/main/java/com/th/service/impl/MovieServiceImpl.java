@@ -117,13 +117,13 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
                 " where b.movie_id=m.id " + sqlRatingWhereStatus + sqlRatingMaxStatus + sqlGenreStatus + sqlTimeStatus + sqlVoteStatus + " order by b.score ";
         String sqlByRateDrops = (sqlByRateUp + " desc");
 
-        String sqlByTimeUp = "select m.* from movie as m " + sqlRating +
-                " where m.id=m.id " +
+        String sqlByTimeUp = "select m.* from movie as m,(select movie_id,count(*) as vote from movie_rating group by movie_id ) as b" + sqlRating +
+                " where m.id=b.movie_id " +
                 sqlRatingWhereStatus + sqlRatingMaxStatus + sqlGenreStatus + sqlTimeStatus + sqlVoteStatus + "order by timer";
         String sqlByTimeDrops = (sqlByTimeUp + " desc");
 
-        String sqlByNameUp = "select m.* from movie as m " + sqlRating +
-                " where m.id=m.id " + sqlRatingWhereStatus + sqlRatingMaxStatus + sqlGenreStatus + sqlTimeStatus + sqlVoteStatus + " order by m.movie_name";
+        String sqlByNameUp = "select m.* from movie as m,(select movie_id,count(*) as vote from movie_rating group by movie_id ) as b" + sqlRating +
+                " where m.id=b.movie_id " + sqlRatingWhereStatus + sqlRatingMaxStatus + sqlGenreStatus + sqlTimeStatus + sqlVoteStatus + " order by m.movie_name";
         String sqlByNameDrops = (sqlByNameUp + " desc");
 
         Page<Movie> page = new Page<>(statusMessage.getCurrentPage(), statusMessage.getSize());

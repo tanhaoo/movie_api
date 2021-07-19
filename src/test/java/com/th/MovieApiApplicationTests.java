@@ -21,6 +21,7 @@ import com.th.mapper.MovieMapper;
 import com.th.mapper.MovieRatingMapper;
 import com.th.mapper.UserMapper;
 import com.th.service.*;
+import com.th.utils.IPAddressUtil;
 import com.th.utils.MathUtil;
 import com.th.utils.MovieUtil;
 import org.apache.mahout.cf.taste.common.TasteException;
@@ -342,5 +343,11 @@ class MovieApiApplicationTests {
         movieList1.setListName("v7");
         movieListService.update(movieList1, new QueryWrapper<MovieList>()
                 .eq("user_id", movieList.getUserId()).eq("list_name", movieList.getListName()));
+    }
+
+    @Test
+    public void testGetUrl(){
+        System.out.println(IPAddressUtil.getServeURL());
+        System.out.println(IPAddressUtil.getPort());
     }
 }

@@ -78,9 +78,13 @@ public class MovieController {
     }
 
     @PostMapping("getMovieById")
-    public String getMovieById(@RequestParam("id") int id) {
+    public String getMovieById(@RequestParam("id") int id, @RequestParam("uid") int uid) {
         List<RateMessage> rateMessages = MovieUtil.getRateMessage(redisTemplateService, movieRatingService);
-        return JSONObject.toJSONString(new ReturnObject(MovieUtil.addRateToMovie(movieService.getById(id), rateMessages)));
+        List<MovieList> movieLists = movieListService.list(new QueryWrapper<MovieList>().eq("user_id", uid).eq("list_name", "我的最爱"));
+        return JSONObject.toJSONString(new ReturnObject(
+                MovieUtil.addUserRateToMovie(
+                        MovieUtil.addRateToMovie(
+                                MovieUtil.addListToMovie(movieService.getById(id), movieLists), rateMessages), uid, movieRatingService)));
     }
 
     @PostMapping("getMovieByRating")

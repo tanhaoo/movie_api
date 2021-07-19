@@ -39,4 +39,7 @@ logging:
     com:
       th:
         mapper: debug
+#图片上传路径
+upload:
+  path: D:\tmp\
 

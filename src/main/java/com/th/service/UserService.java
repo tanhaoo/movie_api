@@ -2,6 +2,7 @@ package com.th.service;
 
 import com.th.bean.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -14,4 +15,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface UserService extends IService<User> {
 
     User login(String username, String password);
+
+    String upload(MultipartFile file,String userName);
 }

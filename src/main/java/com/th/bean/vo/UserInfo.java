@@ -10,8 +10,14 @@ import lombok.Data;
 public class UserInfo {
 
     private String name;
-    private String avatar="/avatar2.jpg";
+    private String avatar;
     private Permissions role;
+
+    public UserInfo(String name, String avatar, Permissions role) {
+        this.name = name;
+        this.avatar = avatar;
+        this.role = role;
+    }
 
     public UserInfo(String name, Permissions role) {
         this.name = name;

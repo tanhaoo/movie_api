@@ -44,7 +44,6 @@
             <result property="rating" column="rating"></result>
             <result property="timestamp" column="timestamp"></result>
         </association>
-
     </resultMap>
 
     <select id="getMovieByRating" resultMap="userMovieResult">

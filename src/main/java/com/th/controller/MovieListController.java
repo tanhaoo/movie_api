@@ -97,7 +97,6 @@ public class MovieListController {
 
     @PostMapping("insertMovieToList")
     public String insertMovieToList(@RequestBody MovieList movieList) {
-
         return JSONObject.toJSONString(new ReturnObject(
                 movieListService.getOne(new QueryWrapper<MovieList>()
                         .eq("user_id", movieList.getUserId())
@@ -107,6 +106,17 @@ public class MovieListController {
                                 ? "已成功添加到'" + movieList.getListName() + "'"
                                 : "'" + movieList.getListName() + "'添加失败"
                         : "'" + movieList.getListName() + "'已存在该影片"
+        ));
+    }
+
+    @PostMapping("removeMovieFromList")
+    public String removeMovieFromList(@RequestBody MovieList movie) {
+        return JSONObject.toJSONString(new ReturnObject(movieListService.remove(
+                new QueryWrapper<MovieList>()
+                        .eq("user_id", movie.getUserId())
+                        .eq("list_name", movie.getListName())
+                        .eq("movie_id", movie.getMovieId())
+        ) ? "已从当前列表中移除" : "移除失败"
         ));
     }
 }

@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author TanHaooo
  * @since 2021-03-18
  */
-public class Movie implements Serializable {
+public class    Movie implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

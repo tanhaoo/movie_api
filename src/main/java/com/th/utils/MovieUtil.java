@@ -45,6 +45,15 @@ public class MovieUtil {
         }).collect(Collectors.toList());
     }
 
+    public static Movie addListToMovie(Movie movie, List<MovieList> movieLists) {
+        movieLists.stream().filter(movieList ->
+                Objects.equals(movie.getId(), movieList.getMovieId()))
+                .forEach(movieList -> {
+                    movie.setMovieList(movieList);
+                });
+        return movie;
+    }
+
     public static Movie addRateToMovie(Movie movie, List<RateMessage> rateMessages) {
         rateMessages.stream().filter(e ->
                 Objects.equals(movie.getId(), e.getMovieId())
@@ -81,5 +90,12 @@ public class MovieUtil {
                     .eq("movie_id", movie.getId())));
             return movie;
         }).collect(Collectors.toList());
+    }
+
+    public static Movie addUserRateToMovie(Movie movie, int uid, MovieRatingService movieRatingService) {
+        movie.setMovieRating(movieRatingService.getOne(new QueryWrapper<MovieRating>()
+                .eq("user_id", uid)
+                .eq("movie_id", movie.getId())));
+        return movie;
     }
 }

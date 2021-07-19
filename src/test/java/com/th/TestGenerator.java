@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.th.utils.IPAddressUtil;
 import com.th.utils.TimeUtil;
 import org.junit.jupiter.api.Test;
 
@@ -58,13 +59,13 @@ public class TestGenerator {
     @Test
     public void testTimeStamp() {
         String time = String.valueOf((int) (System.currentTimeMillis() / 1000));
-        System.out.println(time);
+        System.out.println("timestamp："+time);
         //long转date
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long current = Long.parseLong(time);
         Timestamp ts = new Timestamp(current * 1000);// 不除就是精确到ms 这个是到s
-        System.out.println(current);
+//        System.out.println(current);
         String dateString = format.format(ts);
         System.out.println(dateString);
     }
@@ -73,6 +74,12 @@ public class TestGenerator {
     public void test() {
         System.out.println(TimeUtil.TimeStampToTimeFormat(
                 TimeUtil.TimeFormatToTimeStamp(System.currentTimeMillis())));
+    }
+
+    @Test
+    public void testGetUrl(){
+        System.out.println(IPAddressUtil.getServeURL());
+        System.out.println(IPAddressUtil.getPort());
     }
 
 }
